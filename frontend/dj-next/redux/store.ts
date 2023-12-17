@@ -1,4 +1,4 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
 import authReducer from "./features/authSlice";
 import { apiSlice } from "./services/apiSlice";
 
@@ -8,6 +8,7 @@ export const MakeStore = () => {
             [apiSlice.reducerPath]: apiSlice.reducer,
             auth: authReducer
         }, // You need to provide a valid reducer here
+        middleware: getDefaultMiddleware => getDefaultMiddleware().concat(apiSlice.middleware),
         devTools: process.env.NODE_ENV !== 'production'
     });
 };

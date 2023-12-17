@@ -1,7 +1,10 @@
 'use client'
 
+import { toast } from "@/components/ui/use-toast";
 import { useRegisterMutation } from "@/redux/features/authApiSlice";
+import { Loader2 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { FunctionComponent, useState, ChangeEvent, FormEvent } from "react";
 
 interface PageProps {
@@ -18,14 +21,14 @@ const Page: FunctionComponent<PageProps> = () => {
         password: '',
         re_password: ''
     });
-
+    const router = useRouter();
     const [register, {isLoading}] = useRegisterMutation();
 
-    const  {first_name, last_name, email, password, re_password} = formData
+    const  {first_name, last_name, email, password, re_password} = formData;
 
     const onChange = (event: ChangeEvent<HTMLInputElement>) =>{
         setFormData({...formData, [event.target.name]: event.target.value})
-    }
+    };
 
     const onSubmit = (event: FormEvent<HTMLFormElement>) =>{
         event.preventDefault();
@@ -33,12 +36,20 @@ const Page: FunctionComponent<PageProps> = () => {
         register({first_name, last_name, email, password, re_password})
             .unwrap()
             .then(()=>{
-
+                toast({
+                    title:'Account Created successfully',
+                    description: 'Please check your email to verify account',
+                })
+                router.push('/auth/login')
             })
             .catch(()=>{
-                
+                toast({
+                    title: 'Ooops somthing went wrong',
+                    description: 'Please make sure you have correctly filled in the form',
+                    variant: 'destructive'
+                })
             })
-    }
+    };
 
     return ( 
         <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -157,10 +168,11 @@ const Page: FunctionComponent<PageProps> = () => {
 
                     <div>
                     <button
+                        disabled={isLoading}
                         type="submit"
                         className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                     >
-                        Sign Up
+                        Sign Up {isLoading && <Loader2 className="w-5 h-5 items-center mx-4 animate-spin"/>} 
                     </button>
                     </div>
                 </form>

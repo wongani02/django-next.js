@@ -4,6 +4,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import Footer from '@/components/common/Footer'
 import AppProvider from '@/redux/provider'
+import { Toaster } from '@/components/ui/toaster'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -26,6 +27,7 @@ export default function RootLayout({
             {children}
           </div>
           <Footer/>
+          <Toaster />
         </AppProvider>
       </body>
     </html>

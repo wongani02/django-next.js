@@ -5,7 +5,6 @@ interface AuthState {
     isLoading: boolean
 }
 
-
 const initialState= {
     isAuthenticated: false,
     isLoading: true
