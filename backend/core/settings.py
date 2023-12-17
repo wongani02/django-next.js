@@ -34,7 +34,7 @@ SECRET_KEY = 'django-insecure-5+@*o)-q9%)t3b*fy121#xg+i#8u+wkknkwz)=k4c1yekhu01h
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = []      
 
 
 # Application definition
@@ -46,11 +46,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    
+    # Local apps
     'users',
 
+    # Third party apps
     'rest_framework',
     'djoser',
+    'social_django',
+    'rest_framework_simplejwt',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -61,6 +66,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -96,6 +102,17 @@ DATABASES = {
 
 # User model
 AUTH_USER_MODEL = "users.User"
+
+AUTH_COOKIE = 'access'
+# AUTH_COOKIE_MAX_AGE=60 * 60 * 24
+AUTH_COOKIE_ACCESS_MAX_AGE = 60*5
+AUTH_COOKIE_REFRESH_MAX_AGE = 60*60*24
+AUTH_COOKIE_SECURE = False
+AUTH_COOKIE_HTTP_ONLY = True
+AUTH_COOKIE_PATH = '/'
+AUTH_COOKIE_SAMESITE = 'None'
+
+# APPEND_SLASH=False
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -141,20 +158,46 @@ MEDIA_ROOT = BASE_DIR/'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Authentication backends 
+AUTHENTICATION_BACKENDS=[
+    'social_core.backends.google.GoogleOAuth2',
+    'social_core.backends.facebook.FacebookOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+# Social auth settings
+# google
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY='1016607321283-qloi3t3fj2tkjs2pltijrg3j273abuj0.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET='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'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE=[
+    'https://www.googleapis.com/auth/userinfo.email',
+    'https://www.googleapis.com/auth/userinfo.profile',
+    'openid',
+]
+SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_DATA=[
+    'first_name', 'last_name'
+]
+
+# facebook
+SOCIAL_AUTH_FACEBOOK_KEY='1318791769041945'
+SOCIAL_AUTH_FACEBOOK_SECRET='08f8bbe5bbc1204aa09351b45cb70b85' 
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
+SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
+    'fields': 'email, first_name, last_name',
+}
 
 # Restframework configurations
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
      'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'users.authentication.CustomJWTAuthentication',
     ]
 }
 
-# Djoser
+# Djoser settings
 DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL': 'password-reset/confirm/{uid}/{token}',
     # 'USERNAME_RESET_CONFIRM_URL': '#/username/reset/confirm/{uid}/{token}',
@@ -164,6 +207,7 @@ DJOSER = {
     'USER_CREATE_PASSWORD_RETYPE': True,
     'PASSWORD_RESET_CONFIRM_RETYPE': True,
     'TOKEN_MODEL': None,
+    'SOCIAL_AUTH_ALLOWED_REDIRECT_URIS': ['http://localhost:3000/auth/google', 'http://localhost:3000/auth/facebook'],
 }
 
 DOMAIN = 'localhost:3000'
@@ -179,3 +223,12 @@ EMAIL_HOST_USER = 'wonganitemborgb2@gmail.com'
 EMAIL_HOST_PASSWORD = 'ltuqcdgicmjtonys'
 
 EMAIL_RECEPIENT = 'wonganitemborgb2@gmail.com'
+
+
+# Cors headers settings
+CSRF_TRUSTED_ORIGINS = ['http://localhost:3000', 'http://127.0.0.1:3000']
+CORS_ORIGIN_WHITELIST = (
+  'http://localhost:3000', 'http://127.0.0.1:3000',
+)
+CORS_ALLOW_CREDENTIALS = True
+

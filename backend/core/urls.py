@@ -13,11 +13,16 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth-api/', include('djoser.urls')),
-    path('auth-api/', include('djoser.urls.jwt')),
+
+    # instead of using the default djoser jwt views we will use our customized 
+    # jwt views we created because we will be using http only cookies with our frontend application
+    # path('auth-api/', include('djoser.urls.jwt')),
+    path('auth-api/', include('users.urls')),
 ]
