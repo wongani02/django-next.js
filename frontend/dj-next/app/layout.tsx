@@ -5,6 +5,7 @@ import { Inter } from 'next/font/google'
 import Footer from '@/components/common/Footer'
 import AppProvider from '@/redux/provider'
 import { Toaster } from '@/components/ui/toaster'
+import Setup from '@/components/utils/setup'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -22,8 +23,9 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <AppProvider>
+          <Setup />
           <NavBar/>
-          <div>
+          <div className='mx-auto max-w-7xl px-2 sm:px-6 lg:px-8 mt-8'>
             {children}
           </div>
           <Footer/>
